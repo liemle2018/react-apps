@@ -1,7 +1,8 @@
-import Todo from "../views/Todo";
+import Caro from "../views/Caro";
+// import Todo from "../views/Todo";
 
 function AppMain() {
-  return <Todo />;
+  return <Caro />;
 }
 
 export default AppMain;
