@@ -63,6 +63,13 @@ body {
   background-color: #f5f5f5;
   color: #4d4d4d;
 }
+table {
+  width: 100%;
+}
+th,
+td {
+  text-align: left;
+}
 @media screen and (min-width: 620px) {
   body {
     font-size: 1.9rem;
@@ -349,3 +356,19 @@ body {
   text-align-last: start !important;
 }
 /* End Caro styles */
+
+/* Begin Filterable product table */
+.filter-product-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.filter-product-table form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.filter-product-table th[colspan='2'] {
+  text-align: center;
+}
+/* End */
