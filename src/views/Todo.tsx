@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ulid } from "ulid";
+import { useImmer } from "use-immer";
 
 import { ITodo } from "../components/TodoItem";
 import { TodoForm } from "../components/Forms";
@@ -7,8 +8,10 @@ import TodoList from "../components/TodoList/TodoList";
 import { FilterButton } from "../components/FilterButton";
 import { TKeyOfFilterMap, FILTER_NAMES, FILTER_MAP } from "../app";
 
+import { findItemById } from "../utils";
+
 export default function Todo() {
-  const [tasks, setTasks] = useState<ITodo[]>([]);
+  const [tasks, setTasks] = useImmer<ITodo[]>([]);
   const [filter, setFilter] = useState<TKeyOfFilterMap>("All");
 
   function addTask(name: string) {
@@ -23,29 +26,21 @@ export default function Todo() {
   }
 
   function toggleTaskCompleted(id: string) {
-    updateTask(id, "completed");
+    setTasks(draftTasks => {
+      const updatedTask = draftTasks.find(task => findItemById(task, id));
+      if (updatedTask) updatedTask.completed = !updatedTask.completed;
+    });
   }
 
   function deleteTask(id: string) {
-    const newTasks: ITodo[] = tasks.filter((task: ITodo) => task.id !== id);
-
-    setTasks(newTasks);
+    setTasks(draftTasks => draftTasks.filter((task: ITodo) => task.id !== id));
   }
 
   function editTask(id: string, name: string) {
-    updateTask(id, "name", name);
-  }
-
-  function updateTask(id: string, key: string, value?: string) {
-    const newsTasks: ITodo[] = tasks.map((task: ITodo) => {
-      if (id === task.id) {
-        const updatedTask = { ...task, [key]: key === "completed" ? !task.completed : value };
-        return updatedTask;
-      }
-      return task;
+    setTasks(draftTasks => {
+      const updatedTask = draftTasks.find(task => findItemById(task, id));
+      if (updatedTask) updatedTask.name = name;
     });
-
-    setTasks(newsTasks);
   }
 
   const filterList = FILTER_NAMES.map((name: TKeyOfFilterMap) => {
