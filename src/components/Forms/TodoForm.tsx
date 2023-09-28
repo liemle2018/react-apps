@@ -1,10 +1,11 @@
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 
-import { ITodoForm } from "./types";
+import { useTodoCtx } from "../../contexts/todo";
 
-function TodoForm({ addTask }: ITodoForm) {
+function TodoForm() {
   const [name, setName] = useState("");
   const nameRef = useRef<HTMLInputElement | null>(null);
+  const { dispatch } = useTodoCtx();
 
   function changeHandle(e: ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
@@ -15,15 +16,14 @@ function TodoForm({ addTask }: ITodoForm) {
     e.preventDefault();
     const nameTrimmed = name.trim();
 
+    setName("");
+    // nameRef?.current?.focus();
+
     if (nameTrimmed.length === 0) {
-      setName("");
-      nameRef.current?.focus();
       return;
     }
 
-    addTask(nameTrimmed);
-    nameRef.current?.focus();
-    setName("");
+    dispatch({ type: "added", name: nameTrimmed });
   }
 
   return (

@@ -5,7 +5,7 @@ import { TodoItem, ITodo } from "../TodoItem";
 import { ITodoList } from "./types";
 import { usePrevious } from "../../utils";
 
-function TodoList({ list, toggleTaskCompleted, deleteTask, editTask }: ITodoList) {
+function TodoList({ list }: ITodoList) {
   const listHeadingRef = useRef<HTMLHeadingElement | null>(null);
   const prevTaskLength = usePrevious(list.length);
 
@@ -19,19 +19,7 @@ function TodoList({ list, toggleTaskCompleted, deleteTask, editTask }: ITodoList
   );
 
   const taskRemaining = `${list.length} task${list.length > 1 ? "s" : ""} remaining`;
-  const taskList =
-    list.length > 0 &&
-    list.map(({ id, name, completed }: ITodo) => (
-      <TodoItem
-        key={id}
-        id={id}
-        name={name}
-        completed={completed}
-        toggleTaskCompleted={toggleTaskCompleted}
-        deleteTask={deleteTask}
-        editTask={editTask}
-      />
-    ));
+  const taskList = list.length > 0 && list.map((task: ITodo) => <TodoItem key={task.id} task={task} />);
 
   return (
     <>

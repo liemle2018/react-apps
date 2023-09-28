@@ -3,11 +3,14 @@ import Todo from "../views/Todo";
 // import FilterableProductTable from "../views/FilterableProductTable";
 
 import ThemeProvider from "../providers/ThemeProvider";
+import TodoProvider from "../providers/TodoProvider";
 
 function AppMain() {
   return (
     <ThemeProvider>
-      <Todo />
+      <TodoProvider>
+        <Todo />
+      </TodoProvider>
     </ThemeProvider>
   );
 }

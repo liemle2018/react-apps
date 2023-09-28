@@ -1,11 +1,15 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 
 import { usePrevious } from "../../utils";
-import { ITodoItem } from "./types";
+import { ITodoTask } from "./types";
+import { useTodoCtx } from "../../contexts/todo";
 
-function TodoItem({ id, name, completed, toggleTaskCompleted, deleteTask, editTask }: ITodoItem) {
+function TodoItem({ task }: ITodoTask) {
   const [isEditing, setIsEditing] = useState(false);
-  const [newName, setNewName] = useState(name);
+  const [newName, setNewName] = useState(task.name);
+  const { id, name, completed } = task;
+
+  const { dispatch } = useTodoCtx();
 
   const editFieldRef = useRef<HTMLInputElement | null>(null);
   const editButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -25,19 +29,18 @@ function TodoItem({ id, name, completed, toggleTaskCompleted, deleteTask, editTa
     setNewName(e.target.value);
   }
 
-  function handleEditing() {
-    setIsEditing(prevIsEditing => !prevIsEditing);
-  }
-
   function handleCancel() {
     setNewName(name);
-    handleEditing();
+    setIsEditing(false);
   }
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    handleEditing();
-    editTask(id, newName);
+    setIsEditing(false);
+    dispatch({
+      type: "changed",
+      task: { ...task, name: newName }
+    });
   }
 
   const editingTemplate = (
@@ -64,16 +67,35 @@ function TodoItem({ id, name, completed, toggleTaskCompleted, deleteTask, editTa
   const viewTemplate = (
     <div className="stack-small">
       <div className="c-cb">
-        <input id={id} type="checkbox" defaultChecked={completed} onChange={() => toggleTaskCompleted(id)} />
+        <input
+          id={id}
+          type="checkbox"
+          defaultChecked={completed}
+          onChange={() =>
+            dispatch({
+              type: "changed",
+              task: { ...task, completed: !completed }
+            })
+          }
+        />
         <label className="todo-label" htmlFor={id}>
           {name}
         </label>
       </div>
       <div className="btn-group">
-        <button type="button" className="btn" onClick={handleEditing} ref={editButtonRef}>
+        <button type="button" className="btn" onClick={() => setIsEditing(true)} ref={editButtonRef}>
           Edit <span className="visually-hidden">{name}</span>
         </button>
-        <button type="button" className="btn btn__danger" onClick={() => deleteTask(id)}>
+        <button
+          type="button"
+          className="btn btn__danger"
+          onClick={() =>
+            dispatch({
+              type: "deleted",
+              id
+            })
+          }
+        >
           Delete <span className="visually-hidden">{name}</span>
         </button>
       </div>
