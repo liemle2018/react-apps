@@ -3,9 +3,9 @@ import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { useTodoCtx } from "../../contexts/todo";
 
 function TodoForm() {
+  const { dispatch } = useTodoCtx();
   const [name, setName] = useState("");
   const nameRef = useRef<HTMLInputElement | null>(null);
-  const { dispatch } = useTodoCtx();
 
   function changeHandle(e: ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
@@ -17,7 +17,7 @@ function TodoForm() {
     const nameTrimmed = name.trim();
 
     setName("");
-    // nameRef?.current?.focus();
+    nameRef.current?.focus();
 
     if (nameTrimmed.length === 0) {
       return;
